@@ -27,21 +27,10 @@ matching the target environment split (e.g. `TARGET=hprd ENV_LIST=dev,int,qual` 
 client certificate mounted at `/client-cert/tls.crt` / `/client-cert/tls.key`
 (see `config.py` for all env vars and defaults).
 
-## Provenance note
+## Before deploying from this copy
 
-This repo was assembled from a mix of sources during a design/implementation
-session with Claude, alongside screenshots of the real production files:
-
-- **Verified against the real file (screenshots)**: `scripts/config.py`,
-  `scripts/main.py`, `scripts/utils.py`.
-- **Authored for this session, targeting the real repo structure**:
-  `scripts/spark/spark_auth.py`, `scripts/spark/spark_check.py`.
-- **Reconstructed, not verified against the real file** — high confidence since
-  their call signatures match the verified `main.py`/`config.py` exactly, but
-  worth diffing against your actual GitLab `pysmoke-test` repo before relying on
-  them: `scripts/cos.py`, `scripts/instances.py`, `scripts/airflow/airflow_check.py`.
-- `requirements.txt` is inferred (`requests`, `boto3`, `hvac`) — merge with your
-  real pinned versions if they differ.
-
-Diff the reconstructed files against the real GitLab repo before deploying from
-this copy.
+- `scripts/cos.py`, `scripts/instances.py`, and `scripts/airflow/airflow_check.py`
+  should be diffed against the internal GitLab `pysmoke-test` repo before
+  relying on them here.
+- `requirements.txt` versions should be reconciled with the real pinned
+  versions if they differ.

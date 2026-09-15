@@ -5,6 +5,12 @@ client instance and uploads a JSON snapshot to IBM COS at
 `monitoring-web/input/<SERVICE>/status.json`, consumed by
 [datahub-v2-web-ui](https://github.com/Abdessalam7/datahub-v2-web-ui).
 
+The snapshot is only re-uploaded when results actually changed since the
+last run (diffed against the current COS object), and each change is also
+appended to a day-partitioned history file at
+`monitoring-web/history/<SERVICE>/<YYYY-MM-DD>.json` (one GET per requested
+day, regardless of how many changes happened that day).
+
 ## Layout
 
 ```

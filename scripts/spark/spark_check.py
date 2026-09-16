@@ -61,6 +61,10 @@ def get_tenants(target, token, env_list, timeout=10):
             log.warning("Error fetching tenants for cluster %s: %s", cluster_name, e)
 
     tenants = [_to_web_schema(t) for t in extracted_tenants]
+    log.info(
+        "Extracted %d tenants before env filter (env_list=%s, envs seen=%s)",
+        len(tenants), env_list, sorted({t["env"] for t in tenants}),
+    )
     return [t for t in tenants if t["env"] in env_list]
 
 

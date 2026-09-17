@@ -94,6 +94,7 @@ def run_airflow():
 
 def run_dags():
     from airflow.dags_check import check_all
+    from airflow.dags_alert import build_email, send_email
     from instances import build_instances
 
     instances_config = config.load_instances_config()
@@ -110,6 +111,14 @@ def run_dags():
 
     ko_count = sum(1 for r in results if not r["ok"])
     log.info("Done: %d KO / %d total", ko_count, len(results))
+
+    if config.EMAIL_ENABLED:
+        generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S+00:00")
+        subject, body = build_email(results, generated_at)
+        if subject:
+            send_email(config.SMTP_HOST, config.SMTP_PORT, config.EMAIL_FROM, config.EMAIL_TO, subject, body)
+        else:
+            log.info("No DAG problems detected, skipping alert email")
 
 
 def run_spark():

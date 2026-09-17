@@ -36,6 +36,14 @@ AIRFLOW_DAG_USERNAME = os.getenv("AIRFLOW_DAG_USERNAME", "")
 AIRFLOW_DAG_PASSWORD = os.getenv("AIRFLOW_DAG_PASSWORD", "")
 QUEUED_THRESHOLD_SECONDS = int(os.getenv("QUEUED_THRESHOLD_SECONDS", "600"))
 
+# DAG monitoring email alerts — sent only when a run finds at least one
+# problem (failed or delayed DAG); the web UI still shows every DAG.
+EMAIL_ENABLED = os.getenv("EMAIL_ENABLED", "false").lower() == "true"
+SMTP_HOST = os.getenv("SMTP_HOST", "")
+SMTP_PORT = int(os.getenv("SMTP_PORT", "25"))
+EMAIL_FROM = os.getenv("EMAIL_FROM", "")
+EMAIL_TO = [e.strip() for e in os.getenv("EMAIL_TO", "").split(",") if e.strip()]
+
 
 def load_instances_config():
     with open(INSTANCES_CONFIG_PATH, "r", encoding="utf-8") as f:

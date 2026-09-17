@@ -59,6 +59,7 @@ def _empty_row(instance, **overrides):
     row = {
         "business_line": instance["business_line"],
         "env": instance["env"],
+        "url": instance["url"],
         "dag_id": None,
         "is_paused": None,
         "state": None,

@@ -115,10 +115,11 @@ def run_dags():
 
     if config.EMAIL_ENABLED:
         generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S+00:00")
-        subject, body = build_email(results, generated_at)
+        subject, text_body, html_body = build_email(results, generated_at)
         if subject:
             send_email(
-                config.SMTP_HOST, config.SMTP_PORT, config.EMAIL_FROM, config.EMAIL_TO, subject, body,
+                config.SMTP_HOST, config.SMTP_PORT, config.EMAIL_FROM, config.EMAIL_TO,
+                subject, text_body, html_body,
                 smtp_username=config.SMTP_USERNAME, smtp_password=config.SMTP_PASSWORD, use_tls=config.SMTP_USE_TLS,
                 debug=config.SMTP_DEBUG,
             )

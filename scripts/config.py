@@ -26,6 +26,11 @@ VAULT_CLIENT_CERT = os.getenv("VAULT_CLIENT_CERT", "/client-cert/tls.crt")
 VAULT_CLIENT_KEY = os.getenv("VAULT_CLIENT_KEY", "/client-cert/tls.key")
 EXCLUDED_CLUSTERS = [c.strip() for c in os.getenv("EXCLUDED_CLUSTERS", "").split(",") if c.strip()]
 
+# DAG monitoring (Basic Auth against each client's Airflow REST API)
+AIRFLOW_DAG_USERNAME = os.getenv("AIRFLOW_DAG_USERNAME", "")
+AIRFLOW_DAG_PASSWORD = os.getenv("AIRFLOW_DAG_PASSWORD", "")
+QUEUED_THRESHOLD_SECONDS = int(os.getenv("QUEUED_THRESHOLD_SECONDS", "600"))
+
 
 def load_instances_config():
     with open(INSTANCES_CONFIG_PATH, "r", encoding="utf-8") as f:

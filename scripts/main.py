@@ -92,6 +92,26 @@ def run_airflow():
     log.info("Done: %d KO / %d total", ko_count, len(results))
 
 
+def run_dags():
+    from airflow.dags_check import check_all
+    from instances import build_instances
+
+    instances_config = config.load_instances_config()
+    instances = build_instances(instances_config, config.ENV_LIST)
+    log.info("Built %d instances", len(instances))
+
+    auth = (config.AIRFLOW_DAG_USERNAME, config.AIRFLOW_DAG_PASSWORD)
+    results = check_all(
+        instances, auth,
+        timeout=config.HTTP_TIMEOUT,
+        queued_threshold_seconds=config.QUEUED_THRESHOLD_SECONDS,
+    )
+    _write_and_upload(results, "dags", "dags")
+
+    ko_count = sum(1 for r in results if not r["ok"])
+    log.info("Done: %d KO / %d total", ko_count, len(results))
+
+
 def run_spark():
     from spark.spark_auth import get_spark_token
     from spark.spark_check import get_tenants
@@ -110,6 +130,8 @@ def main():
 
     if config.SERVICE == "spark":
         run_spark()
+    elif config.SERVICE == "dags":
+        run_dags()
     else:
         run_airflow()
 

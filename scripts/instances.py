@@ -5,16 +5,23 @@ which is a flat array of instance objects.
 """
 
 
-def build_instances(instances_config, env_list):
+def build_instances(instances_config, env_list, client_list=None):
     """
     Walk the airflowctl_inst_list_json array and return a flat list of dicts:
         [{"business_line": ..., "env": ..., "url": ..., "version": ...}, ...]
-    Filtered on env_list.
+    Filtered on env_list, and optionally on client_list (business_line names) —
+    each client's Airflow is a separate instance with its own user base, so a
+    check needing per-client credentials (e.g. dags monitoring) can't assume
+    the same technical user exists everywhere until it's provisioned there too.
     """
     instances = []
     for item in instances_config:
         env = item.get("env", "")
         if env not in env_list:
+            continue
+
+        business_line = item.get("customer", {}).get("name", "unknown")
+        if client_list and business_line not in client_list:
             continue
 
         # url field already comes as "astronomer-xxx-env-uid.data.cloud.net.intra"
@@ -23,7 +30,7 @@ def build_instances(instances_config, env_list):
         url_slug = full_url.replace("https://", "").replace(".data.cloud.net.intra", "")
 
         instances.append({
-            "business_line": item.get("customer", {}).get("name", "unknown"),
+            "business_line": business_line,
             "env": env,
             "url": url_slug,
             "version": item.get("version", "x.y.z"),

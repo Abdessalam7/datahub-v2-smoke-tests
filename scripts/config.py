@@ -4,6 +4,11 @@ import os
 
 TARGET = os.getenv("TARGET", "hprd")
 ENV_LIST = [e.strip() for e in os.getenv("ENV_LIST", "dev,int,qual").split(",") if e.strip()]
+# Optional business_line filter — empty means every client (the default for
+# airflow/spark). Needed for dags monitoring during rollout: each client's
+# Airflow has its own user base, so the technical user only exists on the
+# clients it's actually been provisioned on.
+CLIENT_LIST = [c.strip() for c in os.getenv("CLIENT_LIST", "").split(",") if c.strip()]
 SERVICE = os.getenv("SERVICE", "airflow")
 HTTP_TIMEOUT = int(os.getenv("HTTP_TIMEOUT", "10"))
 

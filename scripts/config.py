@@ -41,6 +41,9 @@ QUEUED_THRESHOLD_SECONDS = int(os.getenv("QUEUED_THRESHOLD_SECONDS", "600"))
 EMAIL_ENABLED = os.getenv("EMAIL_ENABLED", "false").lower() == "true"
 SMTP_HOST = os.getenv("SMTP_HOST", "")
 SMTP_PORT = int(os.getenv("SMTP_PORT", "25"))
+SMTP_USERNAME = os.getenv("SMTP_USERNAME", "")
+SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
+SMTP_USE_TLS = os.getenv("SMTP_USE_TLS", "false").lower() == "true"
 EMAIL_FROM = os.getenv("EMAIL_FROM", "")
 EMAIL_TO = [e.strip() for e in os.getenv("EMAIL_TO", "").split(",") if e.strip()]
 

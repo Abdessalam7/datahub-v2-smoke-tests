@@ -42,7 +42,8 @@ def build_email(results, generated_at):
     return subject, "\n".join(lines)
 
 
-def send_email(smtp_host, smtp_port, email_from, email_to, subject, body):
+def send_email(smtp_host, smtp_port, email_from, email_to, subject, body,
+                smtp_username="", smtp_password="", use_tls=False):
     if not smtp_host or not email_to:
         log.warning("EMAIL_ENABLED is set but SMTP_HOST/EMAIL_TO is missing, skipping send")
         return
@@ -53,5 +54,9 @@ def send_email(smtp_host, smtp_port, email_from, email_to, subject, body):
     msg["To"] = ", ".join(email_to)
 
     with smtplib.SMTP(smtp_host, smtp_port, timeout=10) as smtp:
+        if use_tls:
+            smtp.starttls()
+        if smtp_username:
+            smtp.login(smtp_username, smtp_password)
         smtp.sendmail(email_from, email_to, msg.as_string())
     log.info("Sent alert email to %s: %s", email_to, subject)

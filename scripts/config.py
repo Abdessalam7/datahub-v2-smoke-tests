@@ -9,6 +9,10 @@ ENV_LIST = [e.strip() for e in os.getenv("ENV_LIST", "dev,int,qual").split(",") 
 # Airflow has its own user base, so the technical user only exists on the
 # clients it's actually been provisioned on.
 CLIENT_LIST = [c.strip() for c in os.getenv("CLIENT_LIST", "").split(",") if c.strip()]
+# Optional further narrowing to specific instance url slugs (e.g. a single
+# instance while iterating on the dags check) — empty means every instance
+# CLIENT_LIST/ENV_LIST already matched.
+INSTANCE_LIST = [i.strip() for i in os.getenv("INSTANCE_LIST", "").split(",") if i.strip()]
 SERVICE = os.getenv("SERVICE", "airflow")
 HTTP_TIMEOUT = int(os.getenv("HTTP_TIMEOUT", "10"))
 

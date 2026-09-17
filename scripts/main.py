@@ -98,8 +98,9 @@ def run_dags():
     from instances import build_instances
 
     instances_config = config.load_instances_config()
-    instances = build_instances(instances_config, config.ENV_LIST, config.CLIENT_LIST)
-    log.info("Built %d instances (client_list=%s)", len(instances), config.CLIENT_LIST or "all")
+    instances = build_instances(instances_config, config.ENV_LIST, config.CLIENT_LIST, config.INSTANCE_LIST)
+    log.info("Built %d instances (client_list=%s, instance_list=%s)",
+             len(instances), config.CLIENT_LIST or "all", config.INSTANCE_LIST or "all")
 
     auth = (config.AIRFLOW_DAG_USERNAME, config.AIRFLOW_DAG_PASSWORD)
     results = check_all(

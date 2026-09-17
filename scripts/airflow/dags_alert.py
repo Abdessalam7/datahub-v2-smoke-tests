@@ -37,17 +37,17 @@ def _is_problem(row):
 
 def _reason(row):
     if row["error"]:
-        return f"Erreur : {row['error']}"
+        return f"Error: {row['error']}"
     if row["delayed"]:
-        return "Bloqué en file d'attente au-delà du seuil toléré"
-    return f"Dernier run en échec (état = {row['state']})"
+        return "Stuck queued past the allowed threshold"
+    return f"Latest run failed (state = {row['state']})"
 
 
 def _badge_html(row):
     if row["delayed"]:
-        color, bg, label = _WARN, _WARN_WASH, "RETARD"
+        color, bg, label = _WARN, _WARN_WASH, "DELAYED"
     else:
-        color, bg, label = _KO, _KO_WASH, "ÉCHEC"
+        color, bg, label = _KO, _KO_WASH, "FAILED"
     return (
         f'<span style="display:inline-block;padding:3px 11px;border-radius:999px;'
         f'font:600 11px {_SANS};letter-spacing:.03em;color:{color};background:{bg};">'
@@ -105,7 +105,7 @@ def _instance_block_html(business_line, url, rows):
                   </span>
                 </td>
                 <td width="120" style="text-align:right;font:600 12px {_SANS};color:{_KO};white-space:nowrap;">
-                  {len(rows)} problème{"s" if len(rows) > 1 else ""}
+                  {len(rows)} issue{"s" if len(rows) > 1 else ""}
                 </td>
               </tr>
             </table>
@@ -123,7 +123,7 @@ def _build_html(problems, by_instance, generated_at):
     )
     plural = "s" if len(problems) > 1 else ""
     return f'''<!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <body style="margin:0;padding:0;background:{_BG};">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:{_BG};padding:24px 0;">
     <tr><td align="center">
@@ -132,10 +132,10 @@ def _build_html(problems, by_instance, generated_at):
         <tr>
           <td style="background:{_BRAND_DEEP};padding:26px 28px;">
             <div style="font:700 12px {_SANS};color:{_BRAND};text-transform:uppercase;letter-spacing:.08em;">
-              Datahub v2 &middot; Surveillance des DAGs
+              Datahub v2 &middot; DAG Monitoring
             </div>
             <div style="font:600 21px Georgia,serif;color:#FFFFFF;margin-top:8px;">
-              {len(problems)} problème{plural} détecté{plural}
+              {len(problems)} issue{plural} detected
             </div>
             <div style="font:400 12px {_SANS};color:#8FC7A9;margin-top:6px;">
               {html.escape(generated_at)}
@@ -152,8 +152,8 @@ def _build_html(problems, by_instance, generated_at):
         <tr>
           <td style="padding:14px 28px 24px 28px;border-top:1px solid {_BORDER};">
             <div style="font:400 11.5px {_SANS};color:{_INK_DIM};line-height:1.5;">
-              Alerte générée automatiquement par Datahub v2 — ne pas répondre à cet email.
-              Le tableau de bord affiche l'ensemble des DAGs, y compris ceux en succès.
+              This alert was generated automatically by Datahub v2 — please do not reply.
+              The dashboard shows every DAG, including the ones that succeeded.
             </div>
           </td>
         </tr>
@@ -171,7 +171,7 @@ def build_email(results, generated_at):
         return None, None, None
 
     by_instance = _group_by_instance(problems)
-    subject = f"[Datahub v2] {len(problems)} problème(s) DAG détecté(s)"
+    subject = f"[Datahub v2] {len(problems)} DAG issue(s) detected"
     text_body = _build_text(problems, by_instance, generated_at)
     html_body = _build_html(problems, by_instance, generated_at)
     return subject, text_body, html_body

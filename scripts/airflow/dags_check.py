@@ -84,8 +84,12 @@ def check_instance(instance, auth, timeout=10, queued_threshold_seconds=600):
         log.warning("Failed to list DAGs for %s: %s", instance["url"], e)
         return [_empty_row(instance, ok=False, error=str(e))]
 
+    log.info("%s (%s): %d dags found, fetching latest run for each", instance["url"], instance["business_line"], len(dags))
+
     rows = []
-    for dag_id, is_paused in dags:
+    for i, (dag_id, is_paused) in enumerate(dags, start=1):
+        if i % 20 == 0:
+            log.info("%s: %d/%d dags checked", instance["url"], i, len(dags))
         if is_paused:
             rows.append(_empty_row(instance, dag_id=dag_id, is_paused=True))
             continue
@@ -112,6 +116,10 @@ def check_instance(instance, auth, timeout=10, queued_threshold_seconds=600):
 
 def check_all(instances, auth, timeout=10, queued_threshold_seconds=600):
     results = []
-    for instance in instances:
-        results.extend(check_instance(instance, auth, timeout=timeout, queued_threshold_seconds=queued_threshold_seconds))
+    for i, instance in enumerate(instances, start=1):
+        log.info("[%d/%d] Checking %s (%s/%s)", i, len(instances), instance["url"], instance["business_line"], instance["env"])
+        rows = check_instance(instance, auth, timeout=timeout, queued_threshold_seconds=queued_threshold_seconds)
+        ko = sum(1 for r in rows if not r["ok"])
+        log.info("[%d/%d] Done %s: %d dags, %d KO", i, len(instances), instance["url"], len(rows), ko)
+        results.extend(rows)
     return results

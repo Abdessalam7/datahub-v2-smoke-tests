@@ -43,7 +43,7 @@ def build_email(results, generated_at):
 
 
 def send_email(smtp_host, smtp_port, email_from, email_to, subject, body,
-                smtp_username="", smtp_password="", use_tls=False):
+                smtp_username="", smtp_password="", use_tls=False, debug=False):
     if not smtp_host or not email_to:
         log.warning("EMAIL_ENABLED is set but SMTP_HOST/EMAIL_TO is missing, skipping send")
         return
@@ -54,9 +54,18 @@ def send_email(smtp_host, smtp_port, email_from, email_to, subject, body,
     msg["To"] = ", ".join(email_to)
 
     with smtplib.SMTP(smtp_host, smtp_port, timeout=10) as smtp:
+        if debug:
+            smtp.set_debuglevel(2)
         if use_tls:
             smtp.starttls()
         if smtp_username:
             smtp.login(smtp_username, smtp_password)
-        smtp.sendmail(email_from, email_to, msg.as_string())
-    log.info("Sent alert email to %s: %s", email_to, subject)
+        # sendmail() only raises if the server refuses the whole transaction —
+        # a per-recipient refusal comes back in this dict instead, silently,
+        # so it has to be checked explicitly.
+        refused = smtp.sendmail(email_from, email_to, msg.as_string())
+
+    if refused:
+        log.warning("SMTP server refused some recipients: %s", refused)
+    else:
+        log.info("Sent alert email to %s: %s", email_to, subject)

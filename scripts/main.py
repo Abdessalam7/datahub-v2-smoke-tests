@@ -120,6 +120,7 @@ def run_dags():
             send_email(
                 config.SMTP_HOST, config.SMTP_PORT, config.EMAIL_FROM, config.EMAIL_TO, subject, body,
                 smtp_username=config.SMTP_USERNAME, smtp_password=config.SMTP_PASSWORD, use_tls=config.SMTP_USE_TLS,
+                debug=config.SMTP_DEBUG,
             )
         else:
             log.info("No DAG problems detected, skipping alert email")

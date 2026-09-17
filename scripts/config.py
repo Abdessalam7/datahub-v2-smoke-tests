@@ -48,6 +48,10 @@ SMTP_PORT = int(os.getenv("SMTP_PORT", "25"))
 SMTP_USERNAME = os.getenv("SMTP_USERNAME", "")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
 SMTP_USE_TLS = os.getenv("SMTP_USE_TLS", "false").lower() == "true"
+# Prints the full SMTP conversation (commands + server responses) to the
+# job's logs — turn on temporarily to see why a "sent" email never arrives
+# (e.g. accepted then silently dropped by a relay-side content filter).
+SMTP_DEBUG = os.getenv("SMTP_DEBUG", "false").lower() == "true"
 EMAIL_FROM = os.getenv("EMAIL_FROM", "")
 EMAIL_TO = [e.strip() for e in os.getenv("EMAIL_TO", "").split(",") if e.strip()]
 

@@ -9,6 +9,7 @@ the alert volume during an incident turns out to be a problem).
 import html
 import logging
 import smtplib
+from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
@@ -33,6 +34,15 @@ _MONO = "Menlo, Consolas, monospace"
 
 def _is_problem(row):
     return not row["ok"]
+
+
+def _format_dt(generated_at):
+    """'2026-09-18T00:16:26+00:00' -> '18 Sep 2026, 00:16 UTC' — falls back to
+    the raw string if it's ever in a shape this doesn't expect."""
+    try:
+        return datetime.fromisoformat(generated_at).strftime("%d %b %Y, %H:%M UTC")
+    except ValueError:
+        return generated_at
 
 
 def _reason(row):
@@ -100,9 +110,10 @@ def _instance_block_html(business_line, url, rows):
               <tr>
                 <td style="padding-right:12px;font:700 13px {_SANS};color:{_INK};text-transform:uppercase;letter-spacing:.04em;">
                   {html.escape(business_line.upper())}
-                  <span style="font-family:{_MONO};font-size:12px;color:{_INK_DIM};font-weight:400;text-transform:none;letter-spacing:0;margin-left:10px;">
-                    {html.escape(url)}
-                  </span>
+                  <a href="https://{html.escape(url)}.data.cloud.net.intra"
+                     style="font-family:{_MONO};font-size:12px;color:{_INK_DIM};font-weight:400;text-transform:none;letter-spacing:0;margin-left:10px;text-decoration:none;">
+                    https://{html.escape(url)}.data.cloud.net.intra
+                  </a>
                 </td>
                 <td width="120" style="text-align:right;font:600 12px {_SANS};color:{_KO};white-space:nowrap;">
                   {len(rows)} issue{"s" if len(rows) > 1 else ""}
@@ -138,7 +149,7 @@ def _build_html(problems, by_instance, generated_at):
               {len(problems)} issue{plural} detected
             </div>
             <div style="font:400 12px {_SANS};color:#8FC7A9;margin-top:6px;">
-              {html.escape(generated_at)}
+              {html.escape(_format_dt(generated_at))}
             </div>
           </td>
         </tr>
@@ -153,7 +164,6 @@ def _build_html(problems, by_instance, generated_at):
           <td style="padding:14px 28px 24px 28px;border-top:1px solid {_BORDER};">
             <div style="font:400 11.5px {_SANS};color:{_INK_DIM};line-height:1.5;">
               This alert was generated automatically by Datahub v2 — please do not reply.
-              The dashboard shows every DAG, including the ones that succeeded.
             </div>
           </td>
         </tr>

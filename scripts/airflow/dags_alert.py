@@ -163,7 +163,7 @@ def _build_html(problems, by_instance, generated_at):
         <tr>
           <td style="padding:14px 28px 24px 28px;border-top:1px solid {_BORDER};">
             <div style="font:400 11.5px {_SANS};color:{_INK_DIM};line-height:1.5;">
-              This alert was generated automatically by Datahub v2 — please do not reply.
+              This alert was generated automatically by Datahub v2 Monitoring Tool — please do not reply.
             </div>
           </td>
         </tr>

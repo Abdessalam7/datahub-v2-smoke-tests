@@ -111,8 +111,8 @@ def _instance_block_html(business_line, url, rows):
                 <td style="padding-right:12px;font:700 13px {_SANS};color:{_INK};text-transform:uppercase;letter-spacing:.04em;">
                   {html.escape(business_line.upper())}
                   <a href="https://{html.escape(url)}.data.cloud.net.intra"
-                     style="font-family:{_MONO};font-size:12px;color:{_INK_DIM};font-weight:400;text-transform:none;letter-spacing:0;margin-left:10px;text-decoration:none;">
-                    https://{html.escape(url)}.data.cloud.net.intra
+                     style="font-family:{_MONO};font-size:12px;color:{_BRAND};font-weight:400;text-transform:none;letter-spacing:0;margin-left:10px;text-decoration:underline;">
+                    {html.escape(url)}
                   </a>
                 </td>
                 <td width="120" style="text-align:right;font:600 12px {_SANS};color:{_KO};white-space:nowrap;">
